@@ -9,16 +9,15 @@ import {
   Cloud, CloudOff
 } from 'lucide-react';
 
-// --- FIREBASE IMPORTS (FIXED) ---
-// We now use standard imports which fixes the "Dynamic require" error
+// --- FIREBASE IMPORTS ---
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, deleteDoc, updateDoc } from 'firebase/firestore';
 
-// --- CONFIGURATION SECTION ---
+// --- CONFIGURATION SECTION (SIMPLIFIED) ---
 
-// 1. PASTE YOUR FIREBASE CONFIG HERE FOR PUBLIC DEPLOYMENT
-// (You get this from the Firebase Console -> Project Settings)
+// 1. PASTE YOUR REAL FIREBASE KEYS HERE
+// Go to Firebase Console -> Project Settings -> General -> Your Apps -> SDK Setup and Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBP17KTNmHCn_3QXy4zVgiWqG9CARJGzm4",
   authDomain: "german-master-app.firebaseapp.com",
@@ -29,30 +28,19 @@ const firebaseConfig = {
   measurementId: "G-RNTFZFENTR"
 };
 
-// 2. Gemini API Key (Ideally use an Environment Variable in Vercel)
-// If deploying locally, paste your key inside the quotes: ""
+// 2. Gemini API Key
+// For public apps, keep this empty string "" and rely on Vercel/GitHub variables if possible.
+// Or paste it here temporarily for testing.
 const apiKey = ""; 
 
-// --- APP INITIALIZATION ---
+// --- APP INITIALIZATION (PRODUCTION READY) ---
 
-// This logic automatically switches between the AI Preview environment 
-// and your Public Deployment configuration.
-let app, auth, db, appId;
-
-try {
-  // Check if we are running in the AI Preview Environment
-  const isAIEnv = typeof __firebase_config !== 'undefined';
-  const configToUse = isAIEnv ? JSON.parse(__firebase_config) : myFirebaseConfig;
-  
-  appId = isAIEnv && typeof __app_id !== 'undefined' ? __app_id : 'german-app-public';
-  
-  // Initialize Firebase
-  app = initializeApp(configToUse);
-  auth = getAuth(app);
-  db = getFirestore(app);
-} catch (e) {
-  console.error("Firebase Init Error: Did you paste your config in line 25?", e);
-}
+// Initialize Firebase directly. No "try/catch" or "AI Environment" checks.
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+// This ID separates users in the database. 
+const appId = 'german-app-public';
 
 // --- UTILITIES ---
 
